@@ -2,6 +2,7 @@ package de.paws.pixelwar;
 
 public class Config {
 
+	private String serverIP;
 	private int serverPort;
 	private int bufferWidth;
 	private int bufferHeight;
@@ -9,6 +10,18 @@ public class Config {
 	private int canvasHeight;
 	private String canvasFile;
 	private Boolean showLabels;
+	private Boolean showLegend;
+	private Boolean showLegendServerInfo;
+	private Boolean showLegendStats;
+	private Boolean showLegendClientStats;
+
+	public String getServerIP() {
+		return serverIP;
+	}
+
+	public void setServerIP(final String serverIP) {
+		this.serverIP = serverIP;
+	}
 
 	public int getServerPort() {
 		return serverPort;
@@ -64,5 +77,37 @@ public class Config {
 
 	public void setShowLabels(final Boolean showLabels) {
 		this.showLabels = showLabels;
+	}
+
+	public Boolean getShowLegend() {
+		return showLegend;
+	}
+
+	public void setShowLegend(final Boolean showLegend) {
+		this.showLegend = showLegend;
+	}
+
+	public Boolean getShowLegendServerInfo() {
+		return showLegendServerInfo;
+	}
+
+	public void setShowLegendServerInfo(final Boolean showLegendServerInfo) {
+		this.showLegendServerInfo = showLegendServerInfo;
+	}
+
+	public Boolean getShowLegendStats() {
+		return showLegendStats;
+	}
+
+	public void setShowLegendStats(final Boolean showLegendStats) {
+		this.showLegendStats = showLegendStats;
+	}
+
+	public Boolean getShowLegendClientStats() {
+		return showLegendClientStats;
+	}
+
+	public void setShowLegendClientStats(final Boolean showLegendClientStats) {
+		this.showLegendClientStats = showLegendClientStats;
 	}
 }

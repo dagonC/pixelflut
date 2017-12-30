@@ -43,6 +43,7 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 			label.setText(ctx.channel().remoteAddress().toString());
 			canvas.addDrawable(label);
 		}
+		canvas.setNumberOfClients(clients.size());
 		channelContext = ctx;
 		synchronized (clients) {
 			clients.add(this);

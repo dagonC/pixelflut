@@ -32,8 +32,15 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 	private final Canvas canvas;
 	private final List<Drawable> drawables = new ArrayList<>();
 	private long lastDraw;
+	private final Config config;
+
+	private long numberOfClients;
+	private long numberOfPixelsPlaced = 0;
+	private long lastNumberOfPixelsPlaced = 0;
+	private long numberOfPixelsPlacedSinceLastStatsRendered;
 
 	public NetCanvas(final Config config) {
+		this.config = config;
 		frame = new JFrame();
 		canvas = new Canvas();
 		resizeBuffer(config.getBufferWidth(), config.getBufferHeight());
@@ -114,7 +121,7 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 	private void drawOverlay(final Graphics2D g, final long dt) {
 		g.setComposite(AlphaComposite.SrcOver);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.drawString(String.format("Pixelflut FPS:%.2f", 1000.0 / dt), 2, 10);
+		addStatistics(g, dt);
 
 		synchronized (drawables) {
 			final Iterator<Drawable> i = drawables.iterator();
@@ -127,6 +134,23 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 					d.dispose();
 					i.remove();
 				}
+			}
+		}
+	}
+
+	private void addStatistics(final Graphics2D g, final long dt) {
+		if (config != null && config.getShowLegend()) {
+			if (config.getShowLegendServerInfo()) {
+				g.drawString(String.format("%s:%d", config.getServerIP(), config.getServerPort()), 2, 10);
+			}
+			if (config.getShowLegendStats()) {
+				numberOfPixelsPlacedSinceLastStatsRendered = numberOfPixelsPlaced - lastNumberOfPixelsPlaced;
+				lastNumberOfPixelsPlaced = numberOfPixelsPlaced;
+				g.drawString(String.format("connections: %d; pixels: %d; fps: %.2f; p/ms: %d", numberOfClients,
+						numberOfPixelsPlaced, 1000.0 / dt, numberOfPixelsPlacedSinceLastStatsRendered), 2, 20);
+			}
+			if (config.getShowLegendClientStats()) {
+
 			}
 		}
 	}
@@ -173,6 +197,7 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 			}
 
 			img.setRGB(x, y, rgb);
+			numberOfPixelsPlaced++;
 		}
 	}
 
@@ -261,4 +286,7 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 		}
 	}
 
+	public void setNumberOfClients(final long numberOfClients) {
+		this.numberOfClients = numberOfClients;
+	}
 }

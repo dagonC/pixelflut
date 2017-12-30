@@ -60,7 +60,7 @@ public class PixelServer extends ChannelHandlerAdapter {
 					});
 
 			// Start the server.
-			final ChannelFuture f = b.bind(new InetSocketAddress("0.0.0.0", port)).sync();
+			final ChannelFuture f = b.bind(new InetSocketAddress(config.getServerIP(), port)).sync();
 
 			// Wait until the server socket is closed.
 			f.channel().closeFuture().sync();

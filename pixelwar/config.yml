@@ -1,7 +1,12 @@
+serverIP: 0.0.0.0
 serverPort: 8282
 bufferWidth: 1100
 bufferHeight: 1100
 canvasWidth: 1024
 canvasHeight: 1024
 canvasFile: "/tmp/canvas.png"
-showLabels: true
+showLabels: false
+showLegend: true
+showLegendServerInfo: true
+showLegendStats: true
+showLegendClientStats: true
