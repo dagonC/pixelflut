@@ -32,12 +32,13 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 	private final Canvas canvas;
 	private final List<Drawable> drawables = new ArrayList<>();
 	private long lastDraw;
+	private long lastSecondBasedStatsDraw = 0;
 	private final Config config;
 
 	private long numberOfClients;
 	private long numberOfPixelsPlaced = 0;
 	private long lastNumberOfPixelsPlaced = 0;
-	private long numberOfPixelsPlacedSinceLastStatsRendered;
+	private long numberOfPixelsPlacedPerSecond;
 
 	public NetCanvas(final Config config) {
 		this.config = config;
@@ -144,10 +145,14 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 				g.drawString(String.format("%s:%d", config.getServerIP(), config.getServerPort()), 2, 10);
 			}
 			if (config.getShowLegendStats()) {
-				numberOfPixelsPlacedSinceLastStatsRendered = numberOfPixelsPlaced - lastNumberOfPixelsPlaced;
-				lastNumberOfPixelsPlaced = numberOfPixelsPlaced;
-				g.drawString(String.format("connections: %d; pixels: %d; fps: %.2f; p/ms: %d", numberOfClients,
-						numberOfPixelsPlaced, 1000.0 / dt, numberOfPixelsPlacedSinceLastStatsRendered), 2, 20);
+				final long currentSeconds = (System.currentTimeMillis() / 1000);
+				if (lastSecondBasedStatsDraw < currentSeconds) {
+					lastSecondBasedStatsDraw = currentSeconds;
+					numberOfPixelsPlacedPerSecond = numberOfPixelsPlaced - lastNumberOfPixelsPlaced;
+					lastNumberOfPixelsPlaced = numberOfPixelsPlaced;
+				}
+				g.drawString(String.format("connections: %d; pixels: %d; fps: %.2f; p/s: %d", numberOfClients,
+						numberOfPixelsPlaced, 1000.0 / dt, numberOfPixelsPlacedPerSecond), 2, 20);
 			}
 			if (config.getShowLegendClientStats()) {
 
