@@ -1,0 +1,8 @@
+serverPort: 8282
+bufferWidth: 1024
+bufferHeight: 1024
+canvasWidth: 800
+canvasHeight: 600
+canvasFile: "/tmp/canvas.png"
+showIPLines: true
+showIPs: true
