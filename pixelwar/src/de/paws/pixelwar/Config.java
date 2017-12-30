@@ -8,8 +8,7 @@ public class Config {
 	private int canvasWidth;
 	private int canvasHeight;
 	private String canvasFile;
-	private Boolean showIPLines;
-	private Boolean showIPs;
+	private Boolean showLabels;
 
 	public int getServerPort() {
 		return serverPort;
@@ -59,19 +58,11 @@ public class Config {
 		this.canvasFile = canvasFile;
 	}
 
-	public Boolean getShowIPLines() {
-		return showIPLines;
+	public Boolean getShowLabels() {
+		return showLabels;
 	}
 
-	public void setShowIPLines(final Boolean showIPLines) {
-		this.showIPLines = showIPLines;
-	}
-
-	public Boolean getShowIPs() {
-		return showIPs;
-	}
-
-	public void setShowIPs(final Boolean showIPs) {
-		this.showIPs = showIPs;
+	public void setShowLabels(final Boolean showLabels) {
+		this.showLabels = showLabels;
 	}
 }

@@ -4,5 +4,4 @@ bufferHeight: 1024
 canvasWidth: 800
 canvasHeight: 600
 canvasFile: "/tmp/canvas.png"
-showIPLines: true
-showIPs: true
+showLabels: true

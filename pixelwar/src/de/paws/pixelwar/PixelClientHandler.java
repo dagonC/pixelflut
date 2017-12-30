@@ -1,14 +1,14 @@
 package de.paws.pixelwar;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 
@@ -19,27 +19,30 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 	private static Set<PixelClientHandler> clients = new HashSet<>();
 
 	private final NetCanvas canvas;
+	private final Config config;
 	private ChannelHandlerContext channelContext;
 	private final Set<String> subscriptions = new HashSet<>();
 	private final Map<String, CommandHandler> handlers = new HashMap<>();
 
 	private Label label;
 
-	public PixelClientHandler(final NetCanvas canvas) {
+	public PixelClientHandler(final NetCanvas canvas, final Config config) {
 		this.canvas = canvas;
+		this.config = config;
 	}
 
-	public void installHandler(final String command,
-			final CommandHandler handler) {
+	public void installHandler(final String command, final CommandHandler handler) {
 		handlers.put(command.toUpperCase(), handler);
 	}
 
 	@Override
 	public void channelActive(final ChannelHandlerContext ctx) throws Exception {
 		super.channelActive(ctx);
-		label = new Label();
-		label.setText(ctx.channel().remoteAddress().toString());
-		canvas.addDrawable(label);
+		if (config.getShowLabels()) {
+			label = new Label();
+			label.setText(ctx.channel().remoteAddress().toString());
+			canvas.addDrawable(label);
+		}
 		channelContext = ctx;
 		synchronized (clients) {
 			clients.add(this);
@@ -47,8 +50,7 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 	}
 
 	@Override
-	public void channelInactive(final ChannelHandlerContext ctx)
-			throws Exception {
+	public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
 		super.channelActive(ctx);
 		synchronized (clients) {
 			clients.remove(this);
@@ -80,8 +82,7 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 	}
 
 	@Override
-	protected void channelRead0(final ChannelHandlerContext ctx,
-			final String msg) throws Exception {
+	protected void channelRead0(final ChannelHandlerContext ctx, final String msg) throws Exception {
 		final int split = msg.indexOf(" ");
 		String command;
 		String data;
@@ -115,10 +116,8 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 	}
 
 	private void handle_HELP(final ChannelHandlerContext ctx, final String data) {
-		writeIfPossible("HELP Commands:\n" + "HELP  SIZE\n"
-				+ "HELP  PX <x> <y>\n" + "HELP  PX <x> <y> <rrggbb[aa]>\n"
-				+ "HELP  SUB\n" + "HELP  SUB [-]<channel>\n"
-				+ "HELP  PUB <channel> <message>\n");
+		writeIfPossible("HELP Commands:\n" + "HELP  SIZE\n" + "HELP  PX <x> <y>\n" + "HELP  PX <x> <y> <rrggbb[aa]>\n"
+				+ "HELP  SUB\n" + "HELP  SUB [-]<channel>\n" + "HELP  PUB <channel> <message>\n");
 	}
 
 	private void handle_SUB(final ChannelHandlerContext ctx, final String data) {
@@ -160,8 +159,7 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 		if (data.length() > 0) {
 			error("SIZE");
 		}
-		write(String
-				.format("SIZE %d %d", canvas.getWidth(), canvas.getHeight()));
+		write(String.format("SIZE %d %d", canvas.getWidth(), canvas.getHeight()));
 	}
 
 	private void handle_PX(final ChannelHandlerContext ctx, final String data) {
