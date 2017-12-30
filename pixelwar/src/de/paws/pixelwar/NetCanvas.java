@@ -24,8 +24,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-public class NetCanvas implements ComponentListener, KeyListener,
-		MouseMotionListener {
+public class NetCanvas implements ComponentListener, KeyListener, MouseMotionListener {
 	private volatile BufferedImage pxBuffer;
 	private volatile BufferStrategy strategy;
 	private final Thread refresher;
@@ -34,16 +33,16 @@ public class NetCanvas implements ComponentListener, KeyListener,
 	private final List<Drawable> drawables = new ArrayList<>();
 	private long lastDraw;
 
-	public NetCanvas() {
+	public NetCanvas(final Config config) {
 		frame = new JFrame();
 		canvas = new Canvas();
-		resizeBuffer(1024, 1024);
+		resizeBuffer(config.getBufferWidth(), config.getBufferHeight());
 
 		frame.addComponentListener(this);
 		canvas.addKeyListener(this);
 		canvas.addMouseMotionListener(this);
 
-		canvas.setSize(800, 600);
+		canvas.setSize(config.getCanvasWidth(), config.getCanvasHeight());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("Pixelflut");
 		// frame.setUndecorated(true);
@@ -103,21 +102,18 @@ public class NetCanvas implements ComponentListener, KeyListener,
 			}
 		}
 
-		newBuffer = frame.getGraphicsConfiguration().createCompatibleImage(w,
-				h, Transparency.OPAQUE);
+		newBuffer = frame.getGraphicsConfiguration().createCompatibleImage(w, h, Transparency.OPAQUE);
 		if (pxBuffer != null) {
 			blit(pxBuffer, newBuffer);
 		}
 		pxBuffer = newBuffer;
 
-		frame.getGraphicsConfiguration().createCompatibleImage(w, h,
-				Transparency.OPAQUE);
+		frame.getGraphicsConfiguration().createCompatibleImage(w, h, Transparency.OPAQUE);
 	}
 
 	private void drawOverlay(final Graphics2D g, final long dt) {
 		g.setComposite(AlphaComposite.SrcOver);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.drawString(String.format("Pixelflut FPS:%.2f", 1000.0 / dt), 2, 10);
 
 		synchronized (drawables) {
@@ -203,8 +199,7 @@ public class NetCanvas implements ComponentListener, KeyListener,
 			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, pxBuffer.getWidth(), pxBuffer.getHeight());
 			g.dispose();
-		} else if (e.getKeyChar() == 'q'
-				|| e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+		} else if (e.getKeyChar() == 'q' || e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			System.exit(0);
 		} else if (e.getKeyChar() == 'l') {
 			Label.show = !Label.show;

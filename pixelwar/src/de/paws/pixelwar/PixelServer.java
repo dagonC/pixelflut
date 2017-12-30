@@ -1,5 +1,10 @@
 package de.paws.pixelwar;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -17,20 +22,17 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-
 public class PixelServer extends ChannelHandlerAdapter {
 
 	private final NetCanvas canvas;
 	private final int port;
 	private final File savefile = new File("/tmp/canvas.png");
+	private static String configFileName = "config.yml";
+	private static Config config;
 
-	public PixelServer(final int port) throws IOException {
-		this.port = port;
-		canvas = new NetCanvas();
+	public PixelServer(final Config config) throws IOException {
+		port = config.getServerPort();
+		canvas = new NetCanvas(config);
 		if (savefile.exists()) {
 			canvas.loadFrom(savefile);
 		}
@@ -41,20 +43,15 @@ public class PixelServer extends ChannelHandlerAdapter {
 		final EventLoopGroup workerGroup = new NioEventLoopGroup();
 		try {
 			final ServerBootstrap b = new ServerBootstrap();
-			b.group(bossGroup, workerGroup)
-					.channel(NioServerSocketChannel.class)
-					.option(ChannelOption.SO_BACKLOG, 100)
-					.handler(new LoggingHandler(LogLevel.INFO))
-					.childHandler(new ChannelInitializer<SocketChannel>() {
+			b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).option(ChannelOption.SO_BACKLOG, 100)
+					.handler(new LoggingHandler(LogLevel.INFO)).childHandler(new ChannelInitializer<SocketChannel>() {
 						@Override
-						public void initChannel(final SocketChannel ch)
-								throws Exception {
+						public void initChannel(final SocketChannel ch) throws Exception {
 							final ChannelPipeline p = ch.pipeline();
 
 							// p.addLast("logger", new LoggingHandler(
 							// LogLevel.DEBUG));
-							p.addLast("framer", new DelimiterBasedFrameDecoder(
-									128, Delimiters.lineDelimiter()));
+							p.addLast("framer", new DelimiterBasedFrameDecoder(128, Delimiters.lineDelimiter()));
 							p.addLast("decoder", new StringDecoder());
 							p.addLast("encoder", new StringEncoder());
 							// and then business logic.
@@ -63,8 +60,7 @@ public class PixelServer extends ChannelHandlerAdapter {
 					});
 
 			// Start the server.
-			final ChannelFuture f = b.bind(
-					new InetSocketAddress("0.0.0.0", port)).sync();
+			final ChannelFuture f = b.bind(new InetSocketAddress("0.0.0.0", port)).sync();
 
 			// Wait until the server socket is closed.
 			f.channel().closeFuture().sync();
@@ -80,9 +76,10 @@ public class PixelServer extends ChannelHandlerAdapter {
 		}
 	}
 
-	public static void main(final String[] args) throws InterruptedException,
-			IOException {
-		new PixelServer(8080).run();
+	public static void main(final String[] args) throws InterruptedException, IOException {
+		configFileName = args.length >= 1 ? args[0] : configFileName; // dumb, dangerous, but does its job ^^
+		config = new ConfigProvider().readConfig(configFileName);
+		new PixelServer(config).run();
 	}
 
 }
