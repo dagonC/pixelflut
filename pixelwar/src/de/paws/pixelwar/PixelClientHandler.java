@@ -55,7 +55,9 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 		synchronized (clients) {
 			clients.remove(this);
 		}
-		label.setAlive(false);
+		if (config.getShowLabels() && label != null) {
+			label.setAlive(false);
+		}
 	}
 
 	public void writeIfPossible(final String str) {
@@ -177,7 +179,9 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 				if (args[2].length() == 6) {
 					color += 0xff000000;
 				}
-				label.setPos(x, y);
+				if (config.getShowLabels() && label != null) {
+					label.setPos(x, y);
+				}
 				canvas.setPixel(x, y, color);
 			} else {
 				error("Usage: PX x y [rrggbb[aa]]");

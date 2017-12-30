@@ -1,7 +1,7 @@
 serverPort: 8282
-bufferWidth: 1024
-bufferHeight: 1024
-canvasWidth: 800
-canvasHeight: 600
+bufferWidth: 1100
+bufferHeight: 1100
+canvasWidth: 1024
+canvasHeight: 1024
 canvasFile: "/tmp/canvas.png"
 showLabels: true
