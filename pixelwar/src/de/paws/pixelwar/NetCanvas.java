@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -39,6 +40,7 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 	private long numberOfPixelsPlaced = 0;
 	private long lastNumberOfPixelsPlaced = 0;
 	private long numberOfPixelsPlacedPerSecond;
+	private Map<String, ClientIPStats> clientIPStats;
 
 	public NetCanvas(final Config config) {
 		this.config = config;
@@ -122,7 +124,9 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 	private void drawOverlay(final Graphics2D g, final long dt) {
 		g.setComposite(AlphaComposite.SrcOver);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		addStatistics(g, dt);
+		if (config != null && config.getShowLegend()) {
+			addLegend(g, dt);
+		}
 
 		synchronized (drawables) {
 			final Iterator<Drawable> i = drawables.iterator();
@@ -139,28 +143,41 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 		}
 	}
 
-	private void addStatistics(final Graphics2D g, final long dt) {
+	private void addLegend(final Graphics2D g, final long dt) {
 		// TODO make the stats automatically stack
-		if (config != null && config.getShowLegend()) {
-			if (config.getShowLegendServerInfo()) {
-				g.drawString(
-						String.format("%s:%d; fps: %.2f", config.getServerIP(), config.getServerPort(), 1000.0 / dt),
-						config.getLegendX(), config.getLegendY());
-			}
-			if (config.getShowLegendStats()) {
-				final long currentSeconds = (System.currentTimeMillis() / 1000);
-				if (lastSecondBasedStatsDraw < currentSeconds) {
-					lastSecondBasedStatsDraw = currentSeconds;
-					numberOfPixelsPlacedPerSecond = numberOfPixelsPlaced - lastNumberOfPixelsPlaced;
-					lastNumberOfPixelsPlaced = numberOfPixelsPlaced;
-				}
-				g.drawString(String.format("connections: %d; pixels: %d; p/s: %d", numberOfClients,
-						numberOfPixelsPlaced, numberOfPixelsPlacedPerSecond), config.getLegendX(),
-						config.getLegendY() + 10);
-			}
-			if (config.getShowLegendClientStats()) {
-				// TODO add per client statistics
+		if (config.getShowLegendServerInfo()) {
+			addLegendServerInfo(g, dt);
+		}
+		if (config.getShowLegendStats()) {
+			addLegendStats(g);
+		}
+		if (config.getShowLegendClientStats()) {
+			// TODO add per client statistics
+			addLegendClientStats(g);
+		}
+	}
 
+	private void addLegendServerInfo(final Graphics2D g, final long dt) {
+		g.drawString(String.format("%s:%d; fps: %.2f", config.getServerIP(), config.getServerPort(), 1000.0 / dt),
+				config.getLegendX(), config.getLegendY());
+	}
+
+	private void addLegendStats(final Graphics2D g) {
+		final long currentSeconds = (System.currentTimeMillis() / 1000);
+		if (lastSecondBasedStatsDraw < currentSeconds) {
+			lastSecondBasedStatsDraw = currentSeconds;
+			numberOfPixelsPlacedPerSecond = numberOfPixelsPlaced - lastNumberOfPixelsPlaced;
+			lastNumberOfPixelsPlaced = numberOfPixelsPlaced;
+		}
+		g.drawString(String.format("connections: %5d; pixels: %15d; p/s: %8d", numberOfClients, numberOfPixelsPlaced,
+				numberOfPixelsPlacedPerSecond), config.getLegendX(), config.getLegendY() + 10);
+	}
+
+	private void addLegendClientStats(final Graphics2D g) {
+		if (clientIPStats != null) {
+			for (final ClientIPStats cIPs : clientIPStats.values()) {
+				g.drawString(String.format("%15s connections: %5d", cIPs.getIp(), cIPs.getNumberOfConnections()),
+						config.getLegendX(), config.getLegendY() + 20);
 			}
 		}
 	}
@@ -298,5 +315,9 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 
 	public void setNumberOfClients(final long numberOfClients) {
 		this.numberOfClients = numberOfClients;
+	}
+
+	public void setClientIPStats(final Map<String, ClientIPStats> clientIPStats) {
+		this.clientIPStats = clientIPStats;
 	}
 }

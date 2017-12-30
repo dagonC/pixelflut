@@ -23,6 +23,7 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 	private ChannelHandlerContext channelContext;
 	private final Set<String> subscriptions = new HashSet<>();
 	private final Map<String, CommandHandler> handlers = new HashMap<>();
+	private final Map<String, ClientIPStats> clientIPStats = new HashMap<>();
 
 	private Label label;
 
@@ -38,11 +39,22 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 	@Override
 	public void channelActive(final ChannelHandlerContext ctx) throws Exception {
 		super.channelActive(ctx);
+		final String clientChannelRemoteAddress = ctx.channel().remoteAddress().toString();
+
+		final ClientIPStats cIPs = clientIPStats.containsKey(clientChannelRemoteAddress)
+				? clientIPStats.get(clientChannelRemoteAddress)
+				: new ClientIPStats(clientChannelRemoteAddress);
+		cIPs.incrementNumberOfConnections();
+		clientIPStats.put(clientChannelRemoteAddress, cIPs);
+		canvas.setClientIPStats(clientIPStats);
+
+		// add label for displaying inside of canvas
 		if (config.getShowLabels()) {
 			label = new Label();
-			label.setText(ctx.channel().remoteAddress().toString());
+			label.setText(clientChannelRemoteAddress);
 			canvas.addDrawable(label);
 		}
+
 		canvas.setNumberOfClients(clients.size());
 		channelContext = ctx;
 		synchronized (clients) {
@@ -53,6 +65,20 @@ public class PixelClientHandler extends SimpleChannelInboundHandler<String> {
 	@Override
 	public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
 		super.channelActive(ctx);
+		final String clientChannelRemoteAddress = ctx.channel().remoteAddress().toString();
+
+		final ClientIPStats cIPs = clientIPStats.containsKey(clientChannelRemoteAddress)
+				? clientIPStats.get(clientChannelRemoteAddress)
+				: new ClientIPStats(clientChannelRemoteAddress);
+		final long currentNumberOfConnections = cIPs.decrementNumberOfConnections();
+		if (currentNumberOfConnections == 0) {
+			clientIPStats.remove(clientChannelRemoteAddress);
+		} else {
+			clientIPStats.put(clientChannelRemoteAddress, cIPs);
+		}
+
+		canvas.setClientIPStats(clientIPStats);
+
 		synchronized (clients) {
 			clients.remove(this);
 		}
