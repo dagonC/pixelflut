@@ -140,9 +140,12 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 	}
 
 	private void addStatistics(final Graphics2D g, final long dt) {
+		// TODO make the stats automatically stack
 		if (config != null && config.getShowLegend()) {
 			if (config.getShowLegendServerInfo()) {
-				g.drawString(String.format("%s:%d", config.getServerIP(), config.getServerPort()), 2, 10);
+				g.drawString(
+						String.format("%s:%d; fps: %.2f", config.getServerIP(), config.getServerPort(), 1000.0 / dt),
+						config.getLegendX(), config.getLegendY());
 			}
 			if (config.getShowLegendStats()) {
 				final long currentSeconds = (System.currentTimeMillis() / 1000);
@@ -151,10 +154,12 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 					numberOfPixelsPlacedPerSecond = numberOfPixelsPlaced - lastNumberOfPixelsPlaced;
 					lastNumberOfPixelsPlaced = numberOfPixelsPlaced;
 				}
-				g.drawString(String.format("connections: %d; pixels: %d; fps: %.2f; p/s: %d", numberOfClients,
-						numberOfPixelsPlaced, 1000.0 / dt, numberOfPixelsPlacedPerSecond), 2, 20);
+				g.drawString(String.format("connections: %d; pixels: %d; p/s: %d", numberOfClients,
+						numberOfPixelsPlaced, numberOfPixelsPlacedPerSecond), config.getLegendX(),
+						config.getLegendY() + 10);
 			}
 			if (config.getShowLegendClientStats()) {
+				// TODO add per client statistics
 
 			}
 		}

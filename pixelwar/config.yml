@@ -10,3 +10,5 @@ showLegend: true
 showLegendServerInfo: true
 showLegendStats: true
 showLegendClientStats: true
+legendX: 2
+legendY: 10

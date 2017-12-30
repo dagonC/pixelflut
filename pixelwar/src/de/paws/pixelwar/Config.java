@@ -14,6 +14,8 @@ public class Config {
 	private Boolean showLegendServerInfo;
 	private Boolean showLegendStats;
 	private Boolean showLegendClientStats;
+	private int legendX;
+	private int legendY;
 
 	public String getServerIP() {
 		return serverIP;
@@ -109,5 +111,21 @@ public class Config {
 
 	public void setShowLegendClientStats(final Boolean showLegendClientStats) {
 		this.showLegendClientStats = showLegendClientStats;
+	}
+
+	public int getLegendX() {
+		return legendX;
+	}
+
+	public void setLegendX(final int legendX) {
+		this.legendX = legendX;
+	}
+
+	public int getLegendY() {
+		return legendY;
+	}
+
+	public void setLegendY(final int legendY) {
+		this.legendY = legendY;
 	}
 }
