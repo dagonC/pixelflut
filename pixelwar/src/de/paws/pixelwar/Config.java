@@ -1,5 +1,7 @@
 package de.paws.pixelwar;
 
+import java.awt.Color;
+
 public class Config {
 
 	private String serverIP;
@@ -16,6 +18,8 @@ public class Config {
 	private Boolean showLegendClientStats;
 	private int legendX;
 	private int legendY;
+	private int legendFontSize;
+	private Color legendFontColor;
 
 	public String getServerIP() {
 		return serverIP;
@@ -127,5 +131,21 @@ public class Config {
 
 	public void setLegendY(final int legendY) {
 		this.legendY = legendY;
+	}
+
+	public int getLegendFontSize() {
+		return legendFontSize;
+	}
+
+	public void setLegendFontSize(final int legendFontSize) {
+		this.legendFontSize = legendFontSize;
+	}
+
+	public Color getLegendFontColor() {
+		return legendFontColor;
+	}
+
+	public void setLegendFontColor(final String legendFontColor) {
+		this.legendFontColor = Color.decode("0x" + legendFontColor);
 	}
 }

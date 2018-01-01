@@ -3,6 +3,7 @@ package de.paws.pixelwar;
 import java.awt.AlphaComposite;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -124,9 +125,16 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 	private void drawOverlay(final Graphics2D g, final long dt) {
 		g.setComposite(AlphaComposite.SrcOver);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		final Color defaultColor = g.getColor();
+		final Font defaultFont = g.getFont();
 		if (config != null && config.getShowLegend()) {
+			g.setFont(new Font("Arial", Font.BOLD, config.getLegendFontSize()));
+			g.setColor(config.getLegendFontColor());
 			addLegend(g, dt);
 		}
+		g.setColor(defaultColor); // reset color
+		g.setFont(defaultFont); // reset fonts
 
 		synchronized (drawables) {
 			final Iterator<Drawable> i = drawables.iterator();
@@ -257,7 +265,7 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 			Label.show = !Label.show;
 		} else if (e.getKeyChar() == 's') {
 			try {
-				saveAs(new File("/tmp/canvas.png"));
+				saveAs(new File(config.getCanvasFile()));
 			} catch (final IOException e1) {
 				e1.printStackTrace();
 			}

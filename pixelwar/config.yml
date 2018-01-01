@@ -12,3 +12,5 @@ showLegendStats: true
 showLegendClientStats: true
 legendX: 2
 legendY: 10
+legendFontSize: 12
+legendFontColor: "ffffff"
