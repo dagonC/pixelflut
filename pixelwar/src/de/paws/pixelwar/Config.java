@@ -20,6 +20,7 @@ public class Config {
 	private int legendY;
 	private int legendFontSize;
 	private Color legendFontColor;
+	private int configReloadIntervallSeconds;
 
 	public String getServerIP() {
 		return serverIP;
@@ -148,4 +149,13 @@ public class Config {
 	public void setLegendFontColor(final String legendFontColor) {
 		this.legendFontColor = Color.decode("0x" + legendFontColor);
 	}
+
+	public int getConfigReloadIntervallSeconds() {
+		return configReloadIntervallSeconds;
+	}
+
+	public void setConfigReloadIntervallSeconds(final int configReloadIntervallSeconds) {
+		this.configReloadIntervallSeconds = configReloadIntervallSeconds;
+	}
+
 }

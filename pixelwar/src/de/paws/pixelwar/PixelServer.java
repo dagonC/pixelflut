@@ -79,7 +79,29 @@ public class PixelServer extends ChannelHandlerAdapter {
 	public static void main(final String[] args) throws InterruptedException, IOException {
 		configFileName = args.length >= 1 ? args[0] : configFileName; // dumb, dangerous, but does its job ^^
 		config = new ConfigProvider().readConfig(configFileName);
-		new PixelServer(config).run();
+
+		final PixelServer pixelServer = new PixelServer(config);
+		final Thread configRefresher = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final Config currentConfig = new ConfigProvider().readConfig(configFileName);
+					while (true) {
+						Thread.sleep(1000 * currentConfig.getConfigReloadIntervallSeconds());
+						pixelServer.updateConfig(new ConfigProvider().readConfig(configFileName));
+					}
+				} catch (final InterruptedException e) {
+				}
+			}
+		});
+
+		configRefresher.start(); // not elegant, but does the trick
+		pixelServer.run();
+	}
+
+	protected void updateConfig(final Config config) {
+		PixelServer.config = config;
+		canvas.updateConfig(config);
 	}
 
 }

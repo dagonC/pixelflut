@@ -35,7 +35,7 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 	private final List<Drawable> drawables = new ArrayList<>();
 	private long lastDraw;
 	private long lastSecondBasedStatsDraw = 0;
-	private final Config config;
+	private Config config;
 
 	private long numberOfClients;
 	private long numberOfPixelsPlaced = 0;
@@ -327,5 +327,12 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 
 	public void setClientIPStats(final Map<String, ClientIPStats> clientIPStats) {
 		this.clientIPStats = clientIPStats;
+	}
+
+	public void updateConfig(final Config config) {
+		this.config = config;
+
+		resizeBuffer(config.getBufferWidth(), config.getBufferHeight());
+		canvas.setSize(config.getCanvasWidth(), config.getCanvasHeight());
 	}
 }

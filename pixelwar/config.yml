@@ -1,9 +1,9 @@
 serverIP: 0.0.0.0
 serverPort: 8282
-bufferWidth: 1100
+bufferWidth: 1300
 bufferHeight: 1100
-canvasWidth: 1024
-canvasHeight: 1024
+canvasWidth: 1000
+canvasHeight: 1000
 canvasFile: "/tmp/canvas.png"
 showLabels: false
 showLegend: true
@@ -13,4 +13,5 @@ showLegendClientStats: true
 legendX: 2
 legendY: 10
 legendFontSize: 12
-legendFontColor: "ffffff"
+legendFontColor: "ffff00"
+configReloadIntervallSeconds: 10
