@@ -304,8 +304,10 @@ public class NetCanvas implements ComponentListener, KeyListener, MouseMotionLis
 		// System.err.println(e.getPoint());
 		// setPixel(e.getX(), e.getY(), 0xffffffff);
 		final Graphics2D g = (Graphics2D) pxBuffer.getGraphics();
-		g.setColor(Color.MAGENTA);
-		g.fillOval(e.getX() - 50, e.getY() - 50, 100, 100);
+		g.setColor(config.getCanvasPaintColor());
+		final int paintOffset = config.getCanvasPaintDiameter() / 2;
+		final int paintDiameter = config.getCanvasPaintDiameter();
+		g.fillOval(e.getX() - paintOffset, e.getY() - paintOffset, paintDiameter, paintDiameter);
 		g.dispose();
 	}
 

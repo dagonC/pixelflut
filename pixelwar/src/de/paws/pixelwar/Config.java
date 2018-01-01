@@ -21,6 +21,8 @@ public class Config {
 	private int legendFontSize;
 	private Color legendFontColor;
 	private int configReloadIntervallSeconds;
+	private Color canvasPaintColor;
+	private int canvasPaintDiameter;
 
 	public String getServerIP() {
 		return serverIP;
@@ -158,4 +160,19 @@ public class Config {
 		this.configReloadIntervallSeconds = configReloadIntervallSeconds;
 	}
 
+	public Color getCanvasPaintColor() {
+		return canvasPaintColor;
+	}
+
+	public void setCanvasPaintColor(final String canvasPaintColor) {
+		this.canvasPaintColor = Color.decode("0x" + canvasPaintColor);
+	}
+
+	public int getCanvasPaintDiameter() {
+		return canvasPaintDiameter;
+	}
+
+	public void setCanvasPaintDiameter(final int canvasPaintDiameter) {
+		this.canvasPaintDiameter = canvasPaintDiameter;
+	}
 }

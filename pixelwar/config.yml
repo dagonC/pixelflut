@@ -13,5 +13,7 @@ showLegendClientStats: true
 legendX: 2
 legendY: 10
 legendFontSize: 12
-legendFontColor: "ffff00"
+legendFontColor: "ff0000"
 configReloadIntervallSeconds: 10
+canvasPaintColor: "ff00ff"
+canvasPaintDiameter: 100
